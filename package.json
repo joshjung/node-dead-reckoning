@@ -1,0 +1,32 @@
+{
+  "name": "dead-reckoning",
+  "author": "Joshua Jung <joshua.p.jung@gmail.com>",
+  "license": "MIT",
+  "description": "The simplest client-only implementation of a dead reckoning algorithm that synchronizes your real-time game client's world state to the server to hide latency.",
+  "version": "0.0.1",
+  "main": "index.js",
+  "url": "https://github.com/joshjung/node-dead-reckoning",
+  "homepage": "https://github.com/joshjung/node-dead-reckoning",
+  "email": "joshua.p.jung@gmail.com",
+  "dependencies": {
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^3.0.1",
+    "jclass": "^0.2.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joshjung/node-dead-reckoning.git"
+  },
+  "keywords": [
+    "dead",
+    "realtime",
+    "real-time",
+    "latency",
+    "reckoning",
+    "synchronize",
+    "client",
+    "server",
+    "game",
+    "pomelo"
+  ]
+}
