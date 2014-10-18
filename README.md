@@ -1,4 +1,6 @@
 
+**UNDER CONSTRUCTION**
+
 Dead Reckoning Explained
 ========================
 
@@ -38,6 +40,11 @@ Testing
 =======
 
 Testing is provided by [mocha](http://visionmedia.github.io/mocha/).
+
+Example
+=======
+
+Example can be found in the code testing suite. I highly recommend looking there first.
 
 License
 =======
