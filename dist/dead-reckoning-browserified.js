@@ -148,11 +148,12 @@ var DeadReckoning = JClass.extend({
     this.gameInterface = gameInterface;
 
     this.userInputStates = [];
-    this.lastUpdateTimeEnd = undefined,
-    this.estServerTime = undefined,
-    this.lastServerState = undefined,
-    this.intervalId = undefined,
-    this.lastSendToServerTime = 1000.0 / 30.0,
+    this.lastUpdateTimeEnd = undefined;
+    this.estServerTime = undefined;
+    this.lastServerState = undefined;
+    this.intervalId = undefined;
+    this.lastSendToServerTime = 1000.0 / 30.0;
+    this.started = false;
 
     /**
      * Send an update to the server every this so often.
@@ -165,7 +166,10 @@ var DeadReckoning = JClass.extend({
   /*===========================*\
    * Public Methods
   \*===========================*/
-  start: function () {
+  start: function (initialState) {
+    this.started = true;
+    this.newServerState = initialState;
+
     var self = this;
 
     // First we sample latency from the server before beginning.
@@ -179,6 +183,8 @@ var DeadReckoning = JClass.extend({
 
         if (cont)
           self.intervalId = setInterval(self.__intervalHandler.bind(this), self.frameTime);
+
+        return;
       }
 
       self.gameInterface.sampleLatency(callback);
@@ -321,6 +327,7 @@ var LatencySampler = JClass.extend({
       if (this.debug)
         console.log('LATENCY', _latency);
 
+      this.dirty = false;
       this._latency = _latency;
     }
 
@@ -340,24 +347,28 @@ var LatencySampler = JClass.extend({
     lastTestTime = {};
     lastLatencySampleTime= -1;
     latencySample = -1;
+    this.dirty = false;
   },
   /*=========================*\
    * Public Methods
   \*=========================*/
   sample: function (callback, count) {
     var self = this,
+      __start = this.__start.bind(this),
+      __end = this.__End.bind(this),
       i = 0;
       count = count || 1;
 
     ping();
 
     function ping() {
-      self.__start();
+      console.log('ping', i);
+      __start('sample' + i);
       callback(pingHandler, false);
     }
 
     function pingHandler() {
-      self.__end();
+      __end('sample' + i);
       (++i < count) ? ping() : callback(null, true);
     }
   },
@@ -376,6 +387,8 @@ var LatencySampler = JClass.extend({
 
     if (this.debug)
       console.log('LATENCY', this.latency);
+
+    this.dirty = true;
 
     this.__push(elapsed);
   },
