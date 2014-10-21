@@ -154,12 +154,11 @@ var DeadReckoning = JClass.extend({
     });
 
     // Save our current state
-    var newUserInputState = new UserInputState(userInput, this.estServerTime);
+    var newUserInputState = new UserInputState(userInput, this.estServerTime, this.latencySampler.getLatency());
     this.userInputStates.push(newUserInputState);
 
     // Finish simluating the remaining milliseconds based on the current user input.
     this.gameInterface.simulateUpdate(newUserInputState.input, this.estServerTime - t);
-
 
     if (this.estServerTime - this.lastSendToServerTime > this.serverUpdateInterval)
     {
