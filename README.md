@@ -46,6 +46,12 @@ Example
 
 Example can be found in the code testing suite. I highly recommend looking there first.
 
+History
+=======
+
+0.1.1: Adding sending of client latency to server.
+0.1.0: Initial working release. Used with Skyduel.
+
 License
 =======
 

@@ -13,7 +13,7 @@ var DeadReckoning = JClass._extend({
    * Public Properties
   \*===========================*/
   setServerState: function (value) {
-    this.lastServerState = value;
+    this.newServerState = value;
   },
   /*===========================*\
    * Private Properties
@@ -44,11 +44,12 @@ var DeadReckoning = JClass._extend({
     this.gameInterface = gameInterface;
 
     this.userInputStates = [];
-    this.lastUpdateTimeEnd = undefined,
-    this.estServerTime = undefined,
-    this.lastServerState = undefined,
-    this.intervalId = undefined,
-    this.lastSendToServerTime = 1000.0 / 30.0,
+    this.lastUpdateTimeEnd = undefined;
+    this.estServerTime = (new Date()).getTime();
+    this.lastServerState = undefined;
+    this.intervalId = undefined;
+    this.lastSendToServerTime = 1000.0 / 30.0;
+    this.started = false;
 
     /**
      * Send an update to the server every this so often.
@@ -61,8 +62,12 @@ var DeadReckoning = JClass._extend({
   /*===========================*\
    * Public Methods
   \*===========================*/
-  start: function () {
-    var self = this;
+  start: function (initialState) {
+    this.started = true;
+    this.newServerState = initialState;
+
+    var self = this,
+      __intervalHandler = self.__intervalHandler.bind(this);
 
     // First we sample latency from the server before beginning.
     this.latencySampler.sample(function (callback, done) {
@@ -74,7 +79,12 @@ var DeadReckoning = JClass._extend({
           cont = self.gameInterface.sampleLatencyCompletedHandler();
 
         if (cont)
-          self.intervalId = setInterval(self.intervalHandler.bind(this), self.frameTime);
+        {
+          console.log('DEAD RECKONING: starting interval frameTime:', self.frameTime);
+          self.intervalId = setInterval(__intervalHandler, self.frameTime);
+        }
+
+        return;
       }
 
       self.gameInterface.sampleLatency(callback);
@@ -89,7 +99,7 @@ var DeadReckoning = JClass._extend({
 
     this.userInputStates = [];
     this.lastUpdateTimeEnd = undefined;
-    this.estServerTime = undefined;
+    this.estServerTime = (new Date()).getTime();
     this.lastServerState = undefined;
     this.intervalId = undefined;
     this.lastSendToServerTime = 1000.0 / 30.0;
@@ -99,8 +109,10 @@ var DeadReckoning = JClass._extend({
   \*===========================*/
   update: function ()
   {
-    if (this.newServerState && !this.lastServerState)
+    if (this.newServerState)
+    {
       this.lastServerState = this.newServerState;
+    }
 
     // As long as the server has never sent us a state, we do nothing.
     if (!this.lastServerState || this.latencySampler.getLatency() == 0)
@@ -142,7 +154,7 @@ var DeadReckoning = JClass._extend({
     });
 
     // Save our current state
-    var newUserInputState = new UserInputState(userInput, this.estServerTime);
+    var newUserInputState = new UserInputState(userInput, this.estServerTime, this.latencySampler.getLatency());
     this.userInputStates.push(newUserInputState);
 
     // Finish simluating the remaining milliseconds based on the current user input.

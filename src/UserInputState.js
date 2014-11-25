@@ -10,9 +10,10 @@ var UserInputState = JClass._extend({
   /*=========================*\
    * Constructor
   \*=========================*/
-  init: function(input, time) {
+  init: function(input, time, latency) {
     this.input = input;
     this.time = time;
+    this.latency = latency;
   }
 });
 

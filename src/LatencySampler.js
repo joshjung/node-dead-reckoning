@@ -40,9 +40,7 @@ var LatencySampler = JClass._extend({
         _latency += l * weights[i];
       });
 
-      if (this.debug)
-        console.log('LATENCY', _latency);
-
+      this.dirty = false;
       this._latency = _latency;
     }
 
@@ -58,10 +56,11 @@ var LatencySampler = JClass._extend({
     this.debug = false;
     this.stack = [];
     this._latency = NaN;
-    maxStackLength = DEFAULT_HISTORY_MAX;
-    lastTestTime = {};
-    lastLatencySampleTime= -1;
-    latencySample = -1;
+    this.maxStackLength = DEFAULT_HISTORY_MAX;
+    this.lastTestTime = {};
+    this.lastLatencySampleTime= -1;
+    this.latencySample = -1;
+    this.dirty = false;
   },
   /*=========================*\
    * Public Methods
@@ -74,12 +73,12 @@ var LatencySampler = JClass._extend({
     ping();
 
     function ping() {
-      self.__start();
+      self.start('sample' + i);
       callback(pingHandler, false);
     }
 
     function pingHandler() {
-      self.__end();
+      self.end('sample' + i);
       (++i < count) ? ping() : callback(null, true);
     }
   },
@@ -89,15 +88,17 @@ var LatencySampler = JClass._extend({
   /*=========================*\
    * Private Methods
   \*=========================*/
-  __start: function (key) {
-    this.lastTestTime[key] = this.now;
+  start: function (key) {
+    this.lastTestTime[key] = this.getNow();
   },
-  __end: function (key) {
-    var elapsed = this.now - this.lastTestTime[key];
+  end: function (key) {
+    var elapsed = this.getNow() - this.lastTestTime[key];
     delete this.lastTestTime[key];
 
     if (this.debug)
       console.log('LATENCY', this.latency);
+
+    this.dirty = true;
 
     this.__push(elapsed);
   },
@@ -107,10 +108,10 @@ var LatencySampler = JClass._extend({
     while (this.stack.length > this.maxStackLength)
       this.stack.shift();
 
-    if (this.lastLatencySampleTime == -1 || this.now - this.lastLatencySampleTime > 2000)
+    if (this.lastLatencySampleTime == -1 || this.getNow() - this.lastLatencySampleTime > 2000)
     {
       this.latencySample = this.latency;
-      this.lastLatencySampleTime = this.now;
+      this.lastLatencySampleTime = this.getNow();
     }
   }
 });
