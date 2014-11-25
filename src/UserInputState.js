@@ -6,7 +6,7 @@ var JClass = require('jclass');
 /*===================================================*\
  * UserInputState()
 \*===================================================*/
-var UserInputState = JClass.extend({
+var UserInputState = JClass._extend({
   /*=========================*\
    * Constructor
   \*=========================*/

@@ -8,7 +8,7 @@ var JClass = require('jclass'),
 /*===================================================*\
  * DeadReckoning()
 \*===================================================*/
-var DeadReckoning = JClass.extend({
+var DeadReckoning = JClass._extend({
   /*===========================*\
    * Public Properties
   \*===========================*/
@@ -18,7 +18,7 @@ var DeadReckoning = JClass.extend({
   /*===========================*\
    * Private Properties
   \*===========================*/
-  __getNow: function() {
+  getNow: function() {
     return (new Date()).getTime();
   },
   /*===========================*\
@@ -74,7 +74,7 @@ var DeadReckoning = JClass.extend({
           cont = self.gameInterface.sampleLatencyCompletedHandler();
 
         if (cont)
-          self.intervalId = setInterval(self.__intervalHandler.bind(this), self.frameTime);
+          self.intervalId = setInterval(self.intervalHandler.bind(this), self.frameTime);
       }
 
       self.gameInterface.sampleLatency(callback);
@@ -97,7 +97,7 @@ var DeadReckoning = JClass.extend({
   /*===========================*\
    * Private Methods
   \*===========================*/
-  __update: function ()
+  update: function ()
   {
     if (this.newServerState && !this.lastServerState)
       this.lastServerState = this.newServerState;
@@ -108,13 +108,13 @@ var DeadReckoning = JClass.extend({
 
     var self = this,
       // Time this update started
-      updateStart = this.__getNow(),
+      updateStart = this.getNow(),
       // Time since our last update ended
       elapsed = updateStart - this.lastUpdateTimeEnd,
       // The state of all user input
       userInput = this.gameInterface.getUserInput();
 
-    this.lastUpdateTimeEnd = this.__getNow();
+    this.lastUpdateTimeEnd = this.getNow();
 
     // Set last server state to either the update
     this.lastServerState = this.newServerState || this.lastServerState;
@@ -162,8 +162,8 @@ var DeadReckoning = JClass.extend({
   /*===========================*\
    * Events
   \*===========================*/
-  __intervalHandler: function () {
-    this.__update();
+  intervalHandler: function () {
+    this.update();
   }
 });
 

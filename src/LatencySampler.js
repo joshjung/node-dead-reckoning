@@ -13,7 +13,7 @@ var DEFAULT_HISTORY_MAX = 10,
 /*===================================================*\
  * LatencySampler()
 \*===================================================*/
-var LatencySampler = JClass.extend({
+var LatencySampler = JClass._extend({
   /*=========================*\
    * Properties
   \*=========================*/
