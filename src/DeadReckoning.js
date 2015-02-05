@@ -67,7 +67,7 @@ var DeadReckoning = JClass._extend({
     this.newServerState = initialState;
 
     var self = this,
-      __intervalHandler = self.__intervalHandler.bind(this);
+      __intervalHandler = self.intervalHandler.bind(this);
 
     // First we sample latency from the server before beginning.
     this.latencySampler.sample(function (callback, done) {
