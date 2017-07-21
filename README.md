@@ -39,7 +39,7 @@ All this can seem daunting. See the example `GameClient.js` for information on h
 Testing
 =======
 
-Testing is provided by [mocha](http://visionmedia.github.io/mocha/).
+Testing is provided by [mocha](http://mochajs.org/).
 
 Example
 =======
